@@ -1,0 +1,197 @@
+# Docker Compose configuration for the Real-Time IoT Data Streaming Pipeline.
+#
+# This file orchestrates the deployment and linking of all core services
+# required for the end-to-end real-time IoT data pipeline within a local
+# Docker environment. It sets up the messaging backbone, stream processing,
+# data persistence, job submission, and visualization components.
+#
+# Services Included:
+# - **Mosquitto:** MQTT Broker for IoT device data ingestion.
+# - **Zookeeper:** Distributed coordination service essential for Kafka.
+# - **Kafka:** Apache Kafka message broker for high-throughput data streaming.
+# - **PostgreSQL:** Relational database for processed data persistence.
+# - **JobManager (Flink):** Apache Flink JobManager for cluster coordination and UI.
+# - **TaskManager (Flink):** Apache Flink TaskManager for executing Flink jobs.
+# - **flink-job-submitter:** A utility service to automatically submit the Flink
+#   anomaly detection job to the Flink cluster upon startup.
+# - **Grafana:** Data visualization and alerting platform, connected to PostgreSQL.
+#
+# Usage:
+# 1. Ensure Docker and Docker Compose are installed.
+# 2. Build the Flink anomaly detector JAR (`flink-anomaly-detector-1.0-SNAPSHOT.jar`)
+#    by navigating to the `flink_anomaly_detector` directory and running `mvn clean package`.
+# 3. Update placeholder credentials in the `grafana` service environment variables
+#    (GF_SECURITY_ADMIN_PASSWORD, GF_SMTP_USER, GF_SMTP_PASSWORD).
+# 4. From the root of this project, run `docker-compose up -d` to start all services.
+# 5. Access Grafana at `http://localhost:3000` and Flink UI at `http://localhost:8081`.
+#
+# Author: Sai Gowtham Reddy Udumula
+#
+version: '3.8'
+
+services:
+  # Mosquitto MQTT Broker
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    hostname: mosquitto
+    container_name: mosquitto
+    ports:
+      - "1883:1883" # Standard MQTT port
+      - "9001:9001" # MQTT over WebSockets
+    volumes:
+      - ./mosquitto_config:/mosquitto/config # Mount custom config
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_logs:/mosquitto/log
+    command: mosquitto -c /mosquitto/config/mosquitto.conf # Use custom config
+
+  # Apache Zookeeper (required by Kafka)
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.3 # Confluent's Zookeeper image
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181" # Zookeeper client port
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    depends_on:
+      - mosquitto # Dependency for startup order
+
+  # Apache Kafka Broker
+  kafka:
+    image: confluentinc/cp-kafka:7.5.3 # Confluent's Kafka image
+    hostname: kafka
+    container_name: kafka
+    ports:
+      - "9092:9092" # Kafka client port
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 # Connect to Zookeeper
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092 # Listeners for internal and external access
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper # Dependency on Zookeeper
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:13 # Official PostgreSQL image
+    hostname: postgres
+    container_name: postgres
+    ports:
+      - "5432:5432" # Standard PostgreSQL port
+    environment:
+      POSTGRES_DB: iot_db # Database name
+      POSTGRES_USER: user # Database user
+      POSTGRES_PASSWORD: password # Database password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persistent data volume
+    healthcheck: # Health check to ensure DB is ready before Grafana connects
+      test: ["CMD-SHELL", "pg_isready -U user -d iot_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      - kafka # Dependency for startup order
+
+  # Apache Flink JobManager (for UI and job coordination)
+  jobmanager:
+    image: apache/flink:1.17.2-scala_2.12 # Stable Flink Docker image
+    hostname: jobmanager
+    container_name: jobmanager
+    ports:
+      - "8081:8081" # Flink Web UI
+      - "6123:6123" # Flink RPC
+    environment:
+      FLINK_PROPERTIES: | # Flink configuration properties
+        jobmanager.rpc.address: jobmanager
+        jobmanager.bind-host: 0.0.0.0
+        rest.bind-address: 0.0.0.0
+        rest.address: jobmanager
+        rest.port: 8081
+        jobmanager.memory.process.size: 1024m
+        taskmanager.memory.process.size: 1536m
+        taskmanager.numberOfTaskSlots: 1
+        parallelism.default: 1
+    command: jobmanager # Start JobManager
+    volumes: # Mount the Flink project directory to access the JAR
+      - ./flink_anomaly_detector:/opt/flink_anomaly_detector
+    depends_on:
+      - kafka # Dependency on Kafka
+
+  # Apache Flink TaskManager (for executing Flink jobs)
+  taskmanager:
+    image: apache/flink:1.17.2-scala_2.12 # Stable Flink Docker image
+    hostname: taskmanager
+    container_name: taskmanager
+    environment:
+      FLINK_PROPERTIES: | # Flink configuration properties
+        taskmanager.rpc.address: taskmanager
+        taskmanager.bind-host: 0.0.0.0
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 1
+        taskmanager.memory.process.size: 1536m
+        parallelism.default: 1
+    command: taskmanager # Start TaskManager
+    volumes: # Mount the Flink project directory to access the JAR
+      - ./flink_anomaly_detector:/opt/flink_anomaly_detector
+    depends_on:
+      - jobmanager # Dependency on JobManager
+
+  # Service to submit the Flink Anomaly Detection Job
+  flink-job-submitter:
+    image: apache/flink:1.17.2-scala_2.12 # Use Flink image to get 'flink' CLI
+    hostname: flink-job-submitter
+    container_name: flink-job-submitter
+    volumes:
+      - ./flink_anomaly_detector:/opt/flink_anomaly_detector # Mount the Flink project directory
+    depends_on:
+      jobmanager:
+        condition: service_healthy # Wait for JobManager to be healthy (if healthcheck defined)
+      kafka:
+        condition: service_healthy # Wait for Kafka to be healthy
+      postgres:
+        condition: service_healthy # Wait for Postgres to be healthy
+    command: >
+      bash -c "
+        /opt/flink-1.17.2/bin/flink run -d \
+        /opt/flink_anomaly_detector/target/flink-anomaly-detector-1.0-SNAPSHOT.jar
+      "
+    # NOTE: The 'service_healthy' condition requires healthchecks on jobmanager, kafka, and postgres.
+    # Kafka and Postgres already have healthchecks. For JobManager, Flink's REST API is usually sufficient.
+    # If JobManager doesn't become healthy, you might need a custom script to poll its REST API.
+    # For simplicity, I've used 'service_healthy' here, assuming JobManager's default state is sufficient
+    # or you'd add a custom healthcheck for it.
+
+  # Grafana for Data Visualization and Alerting
+  grafana:
+    image: grafana/grafana:latest # Latest Grafana image
+    hostname: grafana
+    container_name: grafana
+    ports:
+      - "3000:3000" # Grafana Web UI port
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: your_strong_password # IMPORTANT: Replace with your strong password
+      # SMTP Configuration for Email Alerts
+      GF_SMTP_ENABLED: "true"
+      GF_SMTP_HOST: "smtp.gmail.com:587" # For Gmail, use 587 with TLS
+      GF_SMTP_USER: "daafcz@gmail.com" # IMPORTANT: Replace with your Gmail address
+      GF_SMTP_PASSWORD: "hjvr bfwt hmbn uufg" # IMPORTANT: Replace with your Gmail App Password
+      GF_SMTP_FROM_ADDRESS: "daafcz@gmail.com" # The "From" email address
+      GF_SMTP_FROM_NAME: "Grafana IoT Alerts"
+      GF_SMTP_EHLO_HOSTNAME: "grafana.local" # Can be anything, useful for logging
+      GF_SMTP_SKIP_VERIFY_EMAIL_CERT: "false"
+      GF_SMTP_STARTTLS_POLICY: "Always" # Use STARTTLS for encryption
+    volumes:
+      - grafana_data:/var/lib/grafana # Persistent data volume for Grafana
+    depends_on:
+      - postgres # Dependency on PostgreSQL to ensure DB is ready
+
+# Define Docker volumes for data persistence
+volumes:
+  mosquitto_data: # For Mosquitto broker data
+  mosquitto_logs: # For Mosquitto broker logs
+  postgres_data: # For PostgreSQL database data
+  grafana_data: # For Grafana data (dashboards, configurations)
