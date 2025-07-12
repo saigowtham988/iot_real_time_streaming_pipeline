@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Maven Project Object Model (POM) for Flink Anomaly Detector
+
+This file defines the build configuration for the Apache Flink IoT Anomaly Detection Job.
+It specifies project metadata, dependencies, and plugins required to compile the Java
+code and package it into a self-contained JAR file suitable for submission to a Flink cluster.
+
+Key Configurations:
+- **Project Coordinates:** Defines the groupId, artifactId, version, and packaging type (JAR).
+- **Properties:** Manages versions for Flink, Java, Scala (if applicable), and logging libraries for consistency.
+- **Dependencies:**
+    - Includes core Apache Flink libraries (`flink-java`, `flink-streaming-java`, `flink-clients`) with `provided` scope, as these are typically available in the Flink runtime environment.
+    - Specifies Flink connectors for Kafka (`flink-connector-kafka`) and JDBC (`flink-connector-jdbc`) for data ingress and egress.
+    - Includes the PostgreSQL JDBC driver (`postgresql`) with `runtime` scope, as it's needed during execution but not compilation.
+    - Incorporates Jackson libraries (`jackson-databind`) for efficient JSON parsing of incoming IoT data.
+    - Adds JavaMail API (`jakarta.mail`) for sending email alerts directly from the Flink job.
+    - Configures SLF4J and Log4j for robust logging within the Flink application.
+- **Build Plugins:**
+    - **maven-compiler-plugin:** Ensures the Java code is compiled using the specified Java version.
+    - **maven-shade-plugin:** Crucial for creating a "fat JAR" (or "uber JAR"). This plugin bundles all project dependencies (except those with `provided` scope) into a single executable JAR, simplifying deployment. It also handles potential dependency conflicts by excluding shaded Flink components and common libraries.
+    - **ManifestResourceTransformer:** Configures the `Main-Class` entry in the JAR's manifest, allowing the Flink job to be executed directly.
+
+To build the Flink job JAR, navigate to the `flink_anomaly_detector` directory in your terminal and run:
+`mvn clean package`
+
+Author: Sai Gowtham reddy Udumula
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.iot.pipeline</groupId>
+    <artifactId>flink-anomaly-detector</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Flink Anomaly Detector</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <flink.version>1.17.2</flink.version>
+        <java.version>11</java.version>
+        <scala.version>2.12</scala.version>
+        <slf4j.version>1.7.36</slf4j.version>
+    </properties>
+
+    <dependencies>
+        <!-- Apache Flink Core Dependencies (provided scope to avoid shading into final JAR) -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-java</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-java</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-clients</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Flink Connector for Kafka -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-kafka</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Flink Connector for JDBC (for PostgreSQL sink) -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-jdbc</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- PostgreSQL JDBC Driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.3</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Jackson for JSON parsing (used by ObjectMapper) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.15.2</version>
+        </dependency>
+        <!-- Jackson core and annotations are transitive dependencies of databind, but can be explicit -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.15.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.15.2</version>
+        </dependency>
+
+        <!-- JavaMail API for sending emails -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>1.6.7</version>
+        </dependency>
+
+        <!-- Logging Dependencies -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- Build Configuration -->
+    <build>
+        <plugins>
+            <!-- Maven Compiler Plugin: Configures Java compiler settings -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <!-- Maven Shade Plugin: Creates a fat JAR with all dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes>
+                                    <!-- Exclude Flink's shaded dependencies to avoid conflicts -->
+                                    <exclude>org.apache.flink:flink-shaded-force-shading</exclude>
+                                    <exclude>com.google.code.findbugs:jsr305</exclude>
+                                    <exclude>org.slf4j:*</exclude>
+                                    <exclude>log4j:*</exclude>
+                                    <!-- Exclude Flink connectors if they are provided by the Flink distribution -->
+                                    <exclude>org.apache.flink:flink-connector-kafka:*</exclude>
+                                    <exclude>org.apache.flink:flink-connector-jdbc:*</exclude>
+                                    <exclude>org.postgresql:postgresql:*</exclude>
+                                    <exclude>org.apache.kafka:kafka-clients:*</exclude>
+                                    <!-- Exclude Jackson if Flink's shaded Jackson is preferred or already present -->
+                                    <exclude>com.fasterxml.jackson.core:jackson-databind</exclude>
+                                    <exclude>com.fasterxml.jackson.core:jackson-annotations</exclude>
+                                    <exclude>com.fasterxml.jackson.core:jackson-core</exclude>
+                                    <!-- Exclude other common libraries that might cause conflicts -->
+                                    <exclude>org.lz4:lz4-java</exclude>
+                                    <exclude>org.xerial.snappy:snappy-java</exclude>
+                                    <exclude>com.github.luben:zstd-jni</exclude>
+                                    <exclude>commons-io:commons-io</exclude>
+                                    <exclude>org.apache.commons:commons-lang3</exclude>
+                                    <exclude>org.apache.commons:commons-text</exclude>
+                                    <exclude>org.snakeyaml:snakeyaml-engine</exclude>
+                                    <exclude>com.esotericsoftware.kryo:kryo</exclude>
+                                    <exclude>com.esotericsoftware.minlog:minlog</exclude>
+                                    <exclude>org.objenesis:objenesis</exclude>
+                                    <exclude>commons-collections:commons-collections</exclude>
+                                    <exclude>org.apache.commons:commons-compress</exclude>
+                                    <exclude>org.apache.commons:commons-math3</exclude>
+                                    <exclude>com.twitter:chill-java</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <!-- Exclude signature files that can cause JAR conflicts -->
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <!-- Transformer for services files -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <!-- Transformer to set the Main-Class in the JAR manifest -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.iot.pipeline.AnomalyDetectionJob</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
