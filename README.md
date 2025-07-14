@@ -63,24 +63,24 @@ The pipeline consists of several decoupled components orchestrated using Docker 
 ```
 Real_Time_IoT_Data_Streaming_Pipeline/
 ├── README.md                           # This file
-├── docker-compose.yml                  # Multi-container environment configuration
-├── mosquitto_config/
-│   └── mosquitto.conf                  # Mosquitto MQTT broker configuration
-├── iot_publisher/
-│   └── iot_publisher.py                # IoT sensor data simulator
-├── mqtt_kafka_bridge/
-│   └── mqtt_kafka_bridge.py            # MQTT to Kafka bridge
-├── init/
-│   └── init.sql                        # PostgreSQL database initialization
-├── flink_anomaly_detector/             # Maven project for Flink job
-│   ├── pom.xml                         # Maven build configuration
+├── LICENSE                            # MIT License file
+├── docker/
+│   ├── docker_compose.yml             # Multi-container environment configuration
+│   ├── kafka-connect-mqtt.Dockerfile  # Custom Kafka Connect image
+│   ├── mqtt_source_connector.json     # MQTT Source Connector config
+│   └── placeholder                    # Placeholder file
+├── flink-anomaly-detector/            # Maven project for Flink job
+│   ├── pom.xml                        # Maven build configuration
 │   └── src/main/java/com/iot/pipeline/
-│       └── AnomalyDetectionJob.java    # Flink job source code
-├── kafka_connect_configs/
-│   ├── Dockerfile                      # Custom Kafka Connect image
-│   └── mqtt_source_connector.json      # MQTT Source Connector config
-└── grafana_dashboards/
-    └── iot_health_dashboard.json       # Grafana dashboard export
+│       └── AnomalyDetectionJob.java   # Flink job source code
+├── grafana_dashboards/
+│   └── iot_health_dashboard.json      # Grafana dashboard export
+├── init/                              # Database initialization scripts
+│   └── init.sql                       # PostgreSQL database initialization
+├── mqtt-publisher/
+│   └── iot_publisher.py               # IoT sensor data simulator
+└── mqtt_kafka_bridge/
+    └── mqtt_kafka_bridge.py           # MQTT to Kafka bridge
 ```
 
 ## Getting Started
@@ -177,7 +177,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Author
 
-**Sai Gowtham reddy Udumula**
+**Sai Gowtham Reddy Udumula**
 
 ## Version
 
