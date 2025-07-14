@@ -177,8 +177,8 @@ services:
       # SMTP Configuration for Email Alerts
       GF_SMTP_ENABLED: "true"
       GF_SMTP_HOST: "smtp.gmail.com:587" # For Gmail, use 587 with TLS
-      GF_SMTP_USER: "daafcz@gmail.com" # IMPORTANT: Replace with your Gmail address
-      GF_SMTP_PASSWORD: "hjvr bfwt hmbn uufg" # IMPORTANT: Replace with your Gmail App Password
+      GF_SMTP_USER: "sample@gmail.com" # IMPORTANT: Replace with your Gmail address
+      GF_SMTP_PASSWORD: "random" # IMPORTANT: Replace with your Gmail App Password
       GF_SMTP_FROM_ADDRESS: "daafcz@gmail.com" # The "From" email address
       GF_SMTP_FROM_NAME: "Grafana IoT Alerts"
       GF_SMTP_EHLO_HOSTNAME: "grafana.local" # Can be anything, useful for logging
