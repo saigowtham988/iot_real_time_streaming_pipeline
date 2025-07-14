@@ -44,7 +44,7 @@ services:
       - mosquitto_logs:/mosquitto/log
     command: mosquitto -c /mosquitto/config/mosquitto.conf # Use custom config
 
-  # Apache Zookeeper (required by Kafka)
+  # Apache Zookeeper
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.3 # Confluent's Zookeeper image
     hostname: zookeeper
