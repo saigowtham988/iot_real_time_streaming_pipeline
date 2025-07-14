@@ -111,8 +111,8 @@ Real_Time_IoT_Data_Streaming_Pipeline/
    
    **For Grafana (edit docker-compose.yml):**
    - Replace `your_strong_password` with your desired Grafana admin password
-   - Replace `daafcz@gmail.com` with your Gmail address
-   - Replace `hjvr bfwt hmbn uufg` with your Gmail App Password
+   - Replace `sample@gmail.com` with your Gmail address
+   - Replace `random` with your Gmail App Password
 
    **For Flink Job (edit AnomalyDetectionJob.java):**
    - Replace `SENDER_EMAIL` with your Gmail address
