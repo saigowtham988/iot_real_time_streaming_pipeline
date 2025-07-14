@@ -1,0 +1,518 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "postgres_iot_db"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "paletteColor"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bpm"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "custom.lineColor",
+                "value": "#EAB839"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 20
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "custom.lineColor",
+                "value": "#7EB26D"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 20
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "custom.lineColor",
+                "value": "#629E51"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 20
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "D"
+            },
+            "properties": [
+              {
+                "id": "custom.lineColor",
+                "value": "#1F78C1"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 20
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "E"
+            },
+            "properties": [
+              {
+                "id": "custom.lineColor",
+                "value": "#9D2B2B"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 20
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "F"
+            },
+            "properties": [
+              {
+                "id": "custom.lineColor",
+                "value": "#8F3BB2"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 20
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "G"
+            },
+            "properties": [
+              {
+                "id": "custom.lineColor",
+                "value": "#E05D5D"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 20
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "H"
+            },
+            "properties": [
+              {
+                "id": "custom.lineColor",
+                "value": "#65A6E5"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 20
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "I"
+            },
+            "properties": [
+              {
+                "id": "custom.lineColor",
+                "value": "#C15C17"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 20
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "J"
+            },
+            "properties": [
+              {
+                "id": "custom.lineColor",
+                "value": "#E58F8F"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 20
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "K"
+            },
+            "properties": [
+              {
+                "id": "custom.lineColor",
+                "value": "#7F0000"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 20
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "postgres_iot_db"
+          },
+          "hide": false,
+          "query": "SELECT\n  timestamp AS \"time\",\n  heart_rate\nFROM anomalies\nWHERE\n  $__timeFilter(timestamp)\nORDER BY timestamp",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "postgres_iot_db"
+          },
+          "hide": false,
+          "query": "SELECT\n  timestamp AS \"time\",\n  temperature\nFROM anomalies\nWHERE\n  $__timeFilter(timestamp)\nORDER BY timestamp",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "postgres_iot_db"
+          },
+          "hide": false,
+          "query": "SELECT\n  timestamp AS \"time\",\n  systolic_pressure\nFROM anomalies\nWHERE\n  $__timeFilter(timestamp)\nORDER BY timestamp",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "postgres_iot_db"
+          },
+          "hide": false,
+          "query": "SELECT\n  timestamp AS \"time\",\n  diastolic_pressure\nFROM anomalies\nWHERE\n  $__timeFilter(timestamp)\nORDER BY timestamp",
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "postgres_iot_db"
+          },
+          "hide": false,
+          "query": "SELECT\n  timestamp AS \"time\",\n  oxygen_saturation\nFROM anomalies\nWHERE\n  $__timeFilter(timestamp)\nORDER BY timestamp",
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "postgres_iot_db"
+          },
+          "hide": false,
+          "query": "SELECT\n  timestamp AS \"time\",\n  respiration_rate\nFROM anomalies\nWHERE\n  $__timeFilter(timestamp)\nORDER BY timestamp",
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "postgres_iot_db"
+          },
+          "hide": false,
+          "query": "SELECT\n  timestamp AS \"time\",\n  blood_glucose\nFROM anomalies\nWHERE\n  $__timeFilter(timestamp)\nORDER BY timestamp",
+          "refId": "G"
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "postgres_iot_db"
+          },
+          "hide": false,
+          "query": "SELECT\n  timestamp AS \"time\",\n  stress_level\nFROM anomalies\nWHERE\n  $__timeFilter(timestamp)\nORDER BY timestamp",
+          "refId": "H"
+        }
+      ],
+      "title": "IoT Sensor Data Overview",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "postgres_iot_db"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "N/A",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "auto",
+        "frameIndex": 0,
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "postgres_iot_db"
+          },
+          "query": "SELECT\n  timestamp AS \"time\",\n  device_id,\n  heart_rate,\n  temperature,\n  systolic_pressure,\n  diastolic_pressure,\n  oxygen_saturation,\n  respiration_rate,\n  blood_glucose,\n  stress_level,\n  is_anomaly\nFROM anomalies\nWHERE\n  is_anomaly = TRUE AND $__timeFilter(timestamp)\nORDER BY timestamp DESC\nLIMIT 100",
+          "refId": "A"
+        }
+      ],
+      "title": "Recent Anomalies",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "postgres_iot_db"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "N/A",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercent": false,
+        "textMode": "value",
+        "valueMode": "color"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "postgres_iot_db"
+          },
+          "query": "SELECT\n  timestamp AS \"time\",\n  is_anomaly::int\nFROM anomalies\nWHERE\n  $__timeFilter(timestamp)\nORDER BY timestamp",
+          "refId": "A"
+        }
+      ],
+      "title": "Anomaly Flag Over Time",
+      "type": "stat"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [
+    "iot",
+    "health",
+    "anomaly"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "browser",
+  "title": "IoT Health Monitoring & Anomaly Detection",
+  "uid": "iot_health_dashboard",
+  "version": 1
+}
