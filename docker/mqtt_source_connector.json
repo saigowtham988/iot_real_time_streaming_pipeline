@@ -1,0 +1,21 @@
+{
+  "name": "mqtt-source-connector",
+  "config": {
+    "connector.class": "io.confluent.connect.mqtt.MqttSourceConnector",
+    "tasks.max": "1",
+    "mqtt.server.uri": "tcp://mosquitto:1883", 
+    "mqtt.topics": "iot/sensor_data",
+    "kafka.topic": "iot_raw_data",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "mqtt.qos": "1",
+    "confluent.topic.reporters.bootstrap.servers": "kafka:29092",
+    "confluent.topic.reporters.consumer.bootstrap.servers": "kafka:29092",
+    "confluent.topic.reporters.producer.bootstrap.servers": "kafka:29092",
+    "confluent.topic.bootstrap.servers": "kafka:29092", 
+    "errors.tolerance": "all",
+    "errors.log.enable": "true",
+    "errors.log.include.messages": "true"
+  }
+}
